@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do</title>
+</head>
+
+<body><h2>To-Do App by Sultan</h2>
+  <p>Простое приложение для управления задачами</p>
+
+  <h1>Список задач</h1>
+  <button onclick="showAll()">Все</button>
+<button onclick="showActive()">Активные</button>
+<button onclick="showDone()">Выполненные</button>
+
+  <input type="text" id="input" placeholder="Введите задачу" onkeydown="if(event.key === 'Enter') addTask()">
+
+  <button onclick="addTask()">Добавить</button>
+
+  <button onclick="clearAll()">Очистить всё</button>
+  <button onclick="clearInput()">Очистить поле</button>
+
+
+  <ul id="list"></ul>
+
+ <script>
+  function addTask() {
+    let value = document.getElementById("input").value;
+    value = value.trim();
+
+    if (value === "") {
+      alert("Введите задачу");
+      return;
+    }
+
+    let li = document.createElement("li");
+
+    let span = document.createElement("span");
+    span.innerText = value;
+
+    span.onclick = function () {
+      if (span.style.textDecoration === "line-through") {
+        span.style.textDecoration = "none";
+      } else {
+        span.style.textDecoration = "line-through";
+      }
+      saveTasks();
+    };
+
+    span.ondblclick = function () {
+      let newText = prompt("Измени задачу:", span.innerText);
+      if (newText !== null && newText !== "") {
+        span.innerText = newText;
+        saveTasks();
+      }
+    };
+
+    let btn = document.createElement("button");
+    btn.innerText = "❌";
+
+    btn.onclick = function () {
+      li.remove();
+      saveTasks();
+    };
+
+    li.appendChild(span);
+    li.appendChild(btn);
+
+    document.getElementById("list").appendChild(li);
+    document.getElementById("input").value = "";
+
+    saveTasks();
+  }
+
+  function clearAll() {
+    document.getElementById("list").innerHTML = "";
+    saveTasks();
+  }
+
+  function saveTasks() {
+    localStorage.setItem("tasks", document.getElementById("list").innerHTML);
+  }
+
+  function reattachEvents() {
+    let items = document.querySelectorAll("#list li");
+
+    items.forEach(function (li) {
+      let span = li.querySelector("span");
+      let btn = li.querySelector("button");
+
+      span.onclick = function () {
+        if (span.style.textDecoration === "line-through") {
+          span.style.textDecoration = "none";
+        } else {
+          span.style.textDecoration = "line-through";
+        }
+        saveTasks();
+      };
+
+      span.ondblclick = function () {
+        let newText = prompt("Измени задачу:", span.innerText);
+        if (newText !== null && newText !== "") {
+          span.innerText = newText;
+          saveTasks();
+        }
+      };
+
+      btn.onclick = function () {
+        li.remove();
+        saveTasks();
+      };
+    });
+  }
+
+  window.onload = function () {
+    let saved = localStorage.getItem("tasks");
+
+    if (saved) {
+      document.getElementById("list").innerHTML = saved;
+    }
+
+    reattachEvents();
+  };
+  function showAll() {
+  let items = document.querySelectorAll("#list li");
+  items.forEach(function (li) {
+    li.style.display = "block";
+  });
+}
+
+function showActive() {
+  let items = document.querySelectorAll("#list li");
+  items.forEach(function (li) {
+    let span = li.querySelector("span");
+
+    if (span.style.textDecoration === "line-through") {
+      li.style.display = "none";
+    } else {
+      li.style.display = "block";
+    }
+  });
+}
+
+function showDone() {
+  let items = document.querySelectorAll("#list li");
+  items.forEach(function (li) {
+    let span = li.querySelector("span");
+
+    if (span.style.textDecoration === "line-through") {
+      li.style.display = "block";
+    } else {
+      li.style.display = "none";
+    }
+  });
+}
+
+function clearInput() {
+  document.getElementById("input").value = "";
+}
+</script>
+
+</body>
+</html>
